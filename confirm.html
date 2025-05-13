@@ -14,10 +14,10 @@
     const SUPABASE_URL = "https://mauymxtmohzrjjyiijsi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hdXlteHRtb2h6cmpqeWlpanNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MjQyNTgsImV4cCI6MjA2MTIwMDI1OH0.9pIJhucboPw4g3y2p4fLGuKFKVQBiBvsZ0uR_h3DKBA"; // Safe to use in browser
 
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     (async () => {
-      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+      const { data, error } = await client.auth.exchangeCodeForSession(window.location.href);
       const status = document.getElementById("status");
 
       if (error) {
