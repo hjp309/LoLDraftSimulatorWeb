@@ -21,6 +21,7 @@
       const fragment = new URLSearchParams(window.location.hash.substring(1));
       const access_token = fragment.get("access_token");
       const refresh_token = fragment.get("refresh_token");
+      print(access_token, refresh_token);
 
       if (!access_token || !refresh_token) {
         status.textContent = "❌ Invalid or expired confirmation link.";
