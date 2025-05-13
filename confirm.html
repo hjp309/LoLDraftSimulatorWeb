@@ -15,13 +15,24 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hdXlteHRtb2h6cmpqeWlpanNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MjQyNTgsImV4cCI6MjA2MTIwMDI1OH0.9pIJhucboPw4g3y2p4fLGuKFKVQBiBvsZ0uR_h3DKBA"; // Safe to use in browser
 
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const status = document.getElementById("status");
 
     (async () => {
-      const { data, error } = await client.auth.exchangeCodeForSession(window.location.href);
-      const status = document.getElementById("status");
+      const fragment = new URLSearchParams(window.location.hash.substring(1));
+      const access_token = fragment.get("access_token");
+      const refresh_token = fragment.get("refresh_token");
+
+      if (!access_token || !refresh_token) {
+        status.textContent = "❌ Invalid or expired confirmation link.";
+        return;
+      }
+
+      const { error } = await client.auth.setSession({
+        access_token,
+        refresh_token
+      });
 
       if (error) {
-        console.error("Error confirming user:", error.message);
         status.textContent = "❌ Error confirming your email: " + error.message;
         return;
       }
