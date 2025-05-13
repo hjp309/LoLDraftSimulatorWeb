@@ -17,32 +17,16 @@
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     (async () => {
-      const result = await supabase.auth.exchangeCodeForSession(window.location.href);
-      const { data, error } = result;
-
-      const statusEl = document.getElementById("status");
+      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+      const status = document.getElementById("status");
 
       if (error) {
-        statusEl.innerText = "Error confirming: " + error.message;
+        console.error("Error confirming user:", error.message);
+        status.textContent = "❌ Error confirming your email: " + error.message;
         return;
       }
 
-      const user = data.user;
-
-      // Optionally add to users table
-      const { error: insertError } = await supabase
-        .from("users")
-        .upsert({
-          id: user.id,
-          email: user.email,
-          created_at: new Date().toISOString()
-        }, { onConflict: 'id' });
-
-      if (insertError) {
-        statusEl.innerText = "Confirmed, but failed to save user: " + insertError.message;
-      } else {
-        statusEl.innerText = "Account confirmed! You can now log in from the game.";
-      }
+      status.textContent = "✅ Email confirmed! You can now return to the game.";
     })();
   </script>
 </body>
