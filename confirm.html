@@ -12,26 +12,15 @@
 
   <script>
     const status = document.getElementById("status");
+    const params = new URLSearchParams(window.location.search);
+    const confirmationUrl = params.get("confirmation_url");
 
-    (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const confirmationUrl = params.get("confirmation_url");
-
-      if (!confirmationUrl) {
-        status.textContent = "❌ Invalid confirmation link.";
-        return;
-      }
-
-      try {
-        const response = await fetch(confirmationUrl);
-        if (!response.ok) throw new Error("Confirmation failed");
-
-        status.textContent = "✅ Email confirmed! You can now return to the game.";
-      } catch (err) {
-        console.error(err);
-        status.textContent = "❌ There was a problem confirming your email.";
-      }
-    })();
+    if (!confirmationUrl) {
+      status.textContent = "❌ Invalid confirmation link.";
+    } else {
+      // ✅ Redirect the browser to Supabase's verification link
+      window.location.href = confirmationUrl;
+    }
   </script>
 </body>
 </html>
