@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirming Your Account</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h2>Confirming your account...</h2>
+  <p id="status">Please wait...</p>
+
+  <script>
+    const SUPABASE_URL = "https://mauymxtmohzrjjyiijsi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hdXlteHRtb2h6cmpqeWlpanNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MjQyNTgsImV4cCI6MjA2MTIwMDI1OH0.9pIJhucboPw4g3y2p4fLGuKFKVQBiBvsZ0uR_h3DKBA"; // Safe to use in browser
+
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    (async () => {
+      const result = await supabase.auth.exchangeCodeForSession(window.location.href);
+      const { data, error } = result;
+
+      const statusEl = document.getElementById("status");
+
+      if (error) {
+        statusEl.innerText = "Error confirming: " + error.message;
+        return;
+      }
+
+      const user = data.user;
+
+      // Optionally add to users table
+      const { error: insertError } = await supabase
+        .from("users")
+        .upsert({
+          id: user.id,
+          email: user.email,
+          created_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
+      if (insertError) {
+        statusEl.innerText = "Confirmed, but failed to save user: " + insertError.message;
+      } else {
+        statusEl.innerText = "Account confirmed! You can now log in from the game.";
+      }
+    })();
+  </script>
+</body>
+</html>
