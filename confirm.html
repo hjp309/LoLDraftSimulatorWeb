@@ -11,34 +11,26 @@
   <p id="status">Please wait...</p>
 
   <script>
-    const SUPABASE_URL = "https://mauymxtmohzrjjyiijsi.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hdXlteHRtb2h6cmpqeWlpanNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2MjQyNTgsImV4cCI6MjA2MTIwMDI1OH0.9pIJhucboPw4g3y2p4fLGuKFKVQBiBvsZ0uR_h3DKBA"; // Safe to use in browser
-
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const status = document.getElementById("status");
 
     (async () => {
-      const fragment = new URLSearchParams(window.location.hash.substring(1));
-      const access_token = fragment.get("access_token");
-      const refresh_token = fragment.get("refresh_token");
-      print(access_token, refresh_token);
+      const params = new URLSearchParams(window.location.search);
+      const confirmationUrl = params.get("confirmation_url");
 
-      if (!access_token || !refresh_token) {
-        status.textContent = "❌ Invalid or expired confirmation link.";
+      if (!confirmationUrl) {
+        status.textContent = "❌ Invalid confirmation link.";
         return;
       }
 
-      const { error } = await client.auth.setSession({
-        access_token,
-        refresh_token
-      });
+      try {
+        const response = await fetch(confirmationUrl);
+        if (!response.ok) throw new Error("Confirmation failed");
 
-      if (error) {
-        status.textContent = "❌ Error confirming your email: " + error.message;
-        return;
+        status.textContent = "✅ Email confirmed! You can now return to the game.";
+      } catch (err) {
+        console.error(err);
+        status.textContent = "❌ There was a problem confirming your email.";
       }
-
-      status.textContent = "✅ Email confirmed! You can now return to the game.";
     })();
   </script>
 </body>
