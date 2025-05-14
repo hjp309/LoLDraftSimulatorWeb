@@ -2,25 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Confirming Your Account</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Email Confirmation</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    #status { font-size: 1.5rem; }
+  </style>
 </head>
 <body>
-  <h2>Confirming your account...</h2>
-  <p id="status">Please wait...</p>
-
-  <script>
-    const status = document.getElementById("status");
-    const params = new URLSearchParams(window.location.search);
-    const confirmationUrl = params.get("confirmation_url");
-
-    if (!confirmationUrl) {
-      status.textContent = "❌ Invalid confirmation link.";
-    } else {
-      // ✅ Redirect the browser to Supabase's verification link
-      window.location.href = confirmationUrl;
-    }
-  </script>
+  <h2 id="status">Your email is confirmed :3...</h2>
 </body>
 </html>
